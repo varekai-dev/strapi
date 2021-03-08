@@ -1,20 +1,29 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useContext } from "react";
+import { NavLink } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 
 function Nav() {
-	return (
-		<div className="Nav">
-			<h3> Nav</h3>
-			<div className="Nav__Links">
-				<NavLink to="/" exact>
-					Home
-				</NavLink>
-				<NavLink to="/create" exact>
-					Create
-				</NavLink>
-			</div>
-		</div>
-	)
+  const { user } = useContext(UserContext);
+  return (
+    <div className="Nav">
+      <h3> Nav</h3>
+      <div className="Nav__Links">
+        <NavLink to="/" exact>
+          Home
+        </NavLink>
+        {user && (
+          <NavLink to="/create" exact>
+            Create
+          </NavLink>
+        )}
+        {!user && (
+          <NavLink to="/login" exact>
+            Login
+          </NavLink>
+        )}
+      </div>
+    </div>
+  );
 }
 
-export default Nav
+export default Nav;
