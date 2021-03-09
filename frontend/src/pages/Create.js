@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 function Create() {
+  const { user } = useContext(UserContext);
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
-  console.log(file);
   const baseURI = "http://localhost:1337";
 
   const reset = () => {
@@ -14,6 +15,10 @@ function Create() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!user) {
+      setError("Pleases login");
+      return;
+    }
     if (!description) {
       setError("Please add description");
       return;
@@ -29,7 +34,9 @@ function Create() {
     try {
       await fetch(`${baseURI}/posts`, {
         method: "POST",
-
+        headers: {
+          Authorization: `Bearer ${user.jwt}`,
+        },
         body: formData,
       });
       // const data = await response.json()

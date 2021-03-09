@@ -4,7 +4,7 @@ import Post from "../components/Post";
 import { UserContext } from "../context/UserContext";
 
 function SinglePost({ match, history }) {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const { id } = match.params;
   const [post, setPost] = useState({});
   const [loading, setLoading] = useState(true);
@@ -32,6 +32,7 @@ function SinglePost({ match, history }) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${user.jwt}`,
       },
       body: JSON.stringify({
         description,
@@ -43,13 +44,15 @@ function SinglePost({ match, history }) {
   const handleDelete = async () => {
     await fetch(`http://localhost:1337/posts/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${user.jwt}`,
+      },
     });
     history.push("/");
   };
   useEffect(() => {
     fetchPost();
   }, []);
-  console.log(post.id);
   return (
     <div className="Single__Post">
       {!error ? (
@@ -64,10 +67,14 @@ function SinglePost({ match, history }) {
                     url={post.image && post.image.url}
                     likes={post.likes}
                   />
-                  <button onClick={handleDelete}>Delete this Post</button>
-                  <button onClick={() => setEdit(!edit)}>
-                    {!edit ? "Edit" : "Cancel"}
-                  </button>
+                  {user && (
+                    <>
+                      <button onClick={handleDelete}>Delete this Post</button>
+                      <button onClick={() => setEdit(!edit)}>
+                        {!edit ? "Edit" : "Cancel"}
+                      </button>
+                    </>
+                  )}
                   {edit && (
                     <form onSubmit={handleEditSubmit}>
                       <input

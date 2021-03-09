@@ -1,70 +1,68 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 
-function Login({ history }) {
+function Signup({ history }) {
   const { user, setUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  console.log(user);
-  useEffect(() => {
-    if (user) {
-      history.push("/");
-    }
-  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:1337/auth/local", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          identifier: email,
-          password,
-        }),
-      });
-
+      const response = await fetch(
+        "http://localhost:1337/auth/local/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: email,
+            email,
+            password,
+          }),
+        }
+      );
       const data = await response.json();
-
       if (data.message) {
         setError(data.message[0].messages[0].message);
         return;
       }
       setUser(data);
-    } catch (err) {
-      setError("Something went wrong" + err);
+    } catch (error) {
+      setError(error);
+      setUser("");
     }
   };
+  useEffect(() => {
+    if (user) {
+      history.push("/");
+    }
+  }, [user]);
   return (
     <div>
-      <div>Login</div>
+      <h2>Signup</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="email"
-          placeholder="email"
           value={email}
           onChange={(e) => {
             setEmail(e.target.value);
-            setError("");
           }}
         />
         <input
           type="password"
-          placeholder="password"
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
-            setError("");
           }}
         />
-        <button>Login</button>
+        <button>Signup</button>
       </form>
       {error && <p>{error}</p>}
     </div>
   );
 }
 
-export default Login;
+export default Signup;

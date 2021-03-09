@@ -17,9 +17,14 @@ function Nav() {
           </NavLink>
         )}
         {!user && (
-          <NavLink to="/login" exact>
-            Login
-          </NavLink>
+          <>
+            <NavLink to="/login" exact>
+              Login
+            </NavLink>
+            <NavLink to="/signup" exact>
+              Signup
+            </NavLink>
+          </>
         )}
       </div>
     </div>
